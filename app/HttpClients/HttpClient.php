@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Http;
 abstract class HttpClient
 {
     protected const ENDPOINT_INDEX = '/entity';
-    protected const PRIMARY_FIELDS = [];
     protected PendingRequest $http;
     private static array $instances = [];
 
