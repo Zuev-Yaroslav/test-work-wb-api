@@ -3,6 +3,7 @@
 namespace App\HttpClients;
 
 use App\Models\Account;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 abstract class HttpClient
 {
     protected const ENDPOINT_INDEX = '/entity';
+    protected const MODEL_CLASS = Model::class;
     protected PendingRequest $http;
     private static array $instances = [];
 
@@ -65,14 +67,15 @@ abstract class HttpClient
                 dump('No data in ' . $i . ' page');
                 break;
             }
-            $items->each(function (array $newItem) use ($modelClass, $accountIds) {
-                if ($accountIds->isNotEmpty()) {
-                    $newItem['account_id'] = $accountIds->random();
+            $items->each(function (array $newItem) use ($accountIds) {
+
+                $searchItem = collect($newItem)->only(static::MODEL_CLASS::UNIQUE_ATTRIBUTES);
+                $modelObject = static::MODEL_CLASS::updateOrCreate($searchItem->toArray(), $newItem);
+                if ($modelObject->wasRecentlyCreated && $accountIds->isNotEmpty()) {
+                    static::MODEL_CLASS::update(['account_id' => $accountIds->random()]);
                 }
-                $searchItem = collect($newItem)->only($modelClass::UNIQUE_ATTRIBUTES);
-                $modelClass::updateOrCreate($searchItem->toArray(), $newItem);
                 // ниже код, который изменяет данные в завимости от last_change_date, но не могу понять нужно ли это
-//                $modelObject = $modelClass::firstOrCreate($searchItem->toArray(), $newItem);
+//                $modelObject = static::MODEL_CLASS::firstOrCreate($searchItem->toArray(), $newItem);
 //                if (
 //                    $newItem['last_change_date'] &&
 //                    !$modelObject->wasRecentlyCreated &&
