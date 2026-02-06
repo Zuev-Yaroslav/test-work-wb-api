@@ -18,8 +18,8 @@ class Stock extends Model
     use HasOwner;
     protected $guarded = [];
     public const UNIQUE_ATTRIBUTES = [
-        'date',
-        'nm_id',
+        'warehouse_name',
+        'barcode',
     ];
 
     public function account()

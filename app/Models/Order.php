@@ -18,9 +18,9 @@ class Order extends Model
     use HasOwner;
     protected $guarded = [];
     public const UNIQUE_ATTRIBUTES = [
-        'date',
-        'income_id',
+        'g_number',
         'nm_id',
+        'barcode',
     ];
 
     public function account()

@@ -28,8 +28,9 @@ abstract class HttpClient
         return static::getInstance();
     }
 
-    public function auth(string $key): self
+    public function auth(?string $key): self
     {
+        $key = ($key) ? : config('wbapi.auth_key');
         $this->http->withQueryParameters(['key' => $key]);
         return $this;
     }
@@ -49,44 +50,6 @@ abstract class HttpClient
         }
 
         return $response->collect();
-    }
-
-    public function saveToDB(array $queryParams, string $modelClass): void
-    {
-        $accountIds = Account::all()->pluck('id');
-
-        for ($i = 1; true; $i++) {
-            $queryParams['page'] = $i;
-            $data = $this->index($queryParams);
-            if (!isset($data['data'])) {
-                dump('No data. There must have been some mistake');
-                break;
-            }
-            $items = collect($data['data']);
-            if ($items->isEmpty()) {
-                dump('No data in ' . $i . ' page');
-                break;
-            }
-            $items->each(function (array $newItem) use ($accountIds) {
-
-                $searchItem = collect($newItem)->only(static::MODEL_CLASS::UNIQUE_ATTRIBUTES);
-                $modelObject = static::MODEL_CLASS::updateOrCreate($searchItem->toArray(), $newItem);
-                if ($modelObject->wasRecentlyCreated && $accountIds->isNotEmpty()) {
-                    static::MODEL_CLASS::update(['account_id' => $accountIds->random()]);
-                }
-                // ниже код, который изменяет данные в завимости от last_change_date, но не могу понять нужно ли это
-//                $modelObject = static::MODEL_CLASS::firstOrCreate($searchItem->toArray(), $newItem);
-//                if (
-//                    $newItem['last_change_date'] &&
-//                    !$modelObject->wasRecentlyCreated &&
-//                    $modelObject->last_change_date < $newItem['last_change_date']
-//                ) {
-//                    $modelObject->update($newItem);
-//                }
-            });
-            dump($modelClass . ' records in page ' . $i . ' was saved successfully');
-        }
-
     }
 
 }

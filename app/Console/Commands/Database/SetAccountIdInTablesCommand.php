@@ -1,12 +1,8 @@
 <?php
 
-namespace App\Console\Commands\AfterMigrations;
+namespace App\Console\Commands\Database;
 
 use App\Models\Account;
-use App\Models\Income;
-use App\Models\Order;
-use App\Models\Sale;
-use App\Models\Stock;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -18,7 +14,7 @@ class SetAccountIdInTablesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'after-migrations:set-account-id-in-tables';
+    protected $signature = 'database:set-account-id-in-tables';
     //php artisan after-migrations:set-account-id-in-tables
 
     /**
@@ -70,7 +66,7 @@ class SetAccountIdInTablesCommand extends Command
     }
     private function process(string $modelClass, Collection $accountIds) : void
     {
-        $modelFullClass = "App\\Models\\" . $modelClass;
+        $modelFullClass = config('entities.models.' . strtolower($modelClass));
         $this->info("start this $modelClass process");
         $stocks = $modelFullClass::whereNull('account_id')->latestDate()->get();
         $this->setAccountIdInTables($stocks, $accountIds);

@@ -19,7 +19,6 @@ class Sale extends Model
     protected $guarded = [];
     public const UNIQUE_ATTRIBUTES = [
         'sale_id',
-        'nm_id',
     ];
 
     public function account()

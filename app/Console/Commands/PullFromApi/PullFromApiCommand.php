@@ -25,9 +25,9 @@ class PullFromApiCommand extends Command
      */
     public function handle()
     {
-        $this->call(PullStockFromApiCommand::class);
-        $this->call(PullIncomeFromApiCommand::class);
-        $this->call(PullOrderFromApiCommand::class);
-        $this->call(PullSaleFromApiCommand::class);
+        $this->call(PullEntityFromApiCommand::class, ['income']);
+        $this->call(PullEntityFromApiCommand::class, ['order']);
+        $this->call(PullEntityFromApiCommand::class, ['sale']);
+        $this->call(PullEntityFromApiCommand::class, ['stock']);
     }
 }

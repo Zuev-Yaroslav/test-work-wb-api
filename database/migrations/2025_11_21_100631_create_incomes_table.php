@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Income;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,6 +27,8 @@ return new class extends Migration
             $table->string('nm_id')->nullable();
             $table->string('income_id')->nullable();
             $table->timestamps();
+
+            $table->unique(Income::UNIQUE_ATTRIBUTES);
         });
     }
 

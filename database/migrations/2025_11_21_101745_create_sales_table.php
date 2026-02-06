@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Sale;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -40,8 +41,9 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->string('brand')->nullable();
             $table->boolean('is_storno')->nullable();
-
             $table->timestamps();
+
+            $table->unique(Sale::UNIQUE_ATTRIBUTES);
         });
     }
 

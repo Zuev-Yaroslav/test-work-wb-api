@@ -2,13 +2,16 @@
 
 namespace App\Console\Commands\Database;
 
+use App\Exceptions\ModelExistsException;
 use App\Models\ApiToken;
+use App\Models\Income;
 use App\Models\Order;
 use App\Traits\ValidatesInputs;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 
-class GetFreshOrdersCommand extends Command
+class GetFreshEntitiesCommand extends Command
 {
     use ValidatesInputs;
     /**
@@ -16,15 +19,15 @@ class GetFreshOrdersCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'database:get-fresh-orders {page} {token}';
-    // php artisan database:get-fresh-orders {page} {token}
+    protected $signature = 'database:get-fresh-entities {model} {page} {token}';
+    // php artisan database:get-fresh-entities {model} {page} {token}
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Get fresh entities';
 
     /**
      * Execute the console command.
@@ -35,13 +38,20 @@ class GetFreshOrdersCommand extends Command
             'token' => 'required|string',
             'page' => 'required|integer|min:1',
         ]);
+        $model = strtolower($this->argument('model'));
+        ModelExistsException::checkExistsModel($model);
+        $relationName = Str::plural($model);
 
         $apiToken = ApiToken::where('token', $this->argument('token'))->first();
         if (!$apiToken) {
             $this->error('Invalid token');
             return;
         }
-        $orders = $apiToken->orders()->freshFilter()->latestDate()->paginate(perPage: 5, page: $this->argument('page'));
-        dump($orders->toArray());
+        $entities = $apiToken
+            ->$relationName()
+            ->freshFilter()
+            ->latestDate()
+            ->paginate(perPage: 5, page: $this->argument('page'));
+        dump($entities->toArray());
     }
 }

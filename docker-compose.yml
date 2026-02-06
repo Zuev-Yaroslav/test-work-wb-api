@@ -1,5 +1,6 @@
 services:
   app:
+    image: my-php:latest
     build:
       context: .
       dockerfile: _docker/app/Dockerfile
@@ -8,6 +9,18 @@ services:
     container_name: wb_api_app
     depends_on:
       - db
+  scheduler:
+    image: my-php:latest
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www/
+    container_name: wb_api_scheduler
+    restart: always
+    command: php artisan schedule:work
+    depends_on:
+      - app
   db:
     image: mysql:8.0
     restart: always

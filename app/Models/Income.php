@@ -19,7 +19,6 @@ class Income extends Model
     protected $guarded = [];
     public const UNIQUE_ATTRIBUTES = [
         'income_id',
-        'nm_id',
     ];
 
     public function account()

@@ -17,9 +17,13 @@ docker-compose up -d
 docker exec -it wb_api_app bash
 ````
 ```` bash
-composer update
+composer update --no-scripts
 php artisan key:generate
 php artisan migrate
+chmod -R 777 ./
+composer update
+docker-compose down
+docker-compose up -d
 ````
 - Записать в бд данные
 ```` bash
@@ -27,22 +31,8 @@ php artisan pull-from-api
 ````
 - Потом создать компании, аккаунты и просвоить account_id всем таблицам
 ```` bash
-php artisan after-migrations:set-account-id-in-tables
+php artisan database:set-account-id-in-tables
 ````
-
-- Запустить schedule:work и закрыть данный терминал, чтобы задача работала на фоне
-```` bash
-php artisan schedule:work
-````
-- Зайти еще раз в контейнер и убедиться, что этот процесс висит, прописав:
-```` bash
-ps aux
-````
-- Вы увидите эту строку
-```` bash
-root        37  1.1  0.6  78184 48600 pts/0    S+   11:58   0:00 php artisan schedule:work
-````
-- Чтобы удалить процесс, надо прописать kill <PID>
 
 ТАБЛИЦЫ
 
@@ -53,10 +43,10 @@ root        37  1.1  0.6  78184 48600 pts/0    S+   11:58   0:00 php artisan sch
 
 Команды
 ```` bash
-php artisan database:get-fresh-incomes {page} {token} - получить свежие данные о доходах по последней новой дате
-php artisan database:get-fresh-orders {page} {token} - получить свежие данные о заказах по последней новой дате
-php artisan database:get-fresh-sales {page} {token} - получить свежие данные о продажах по последней новой дате
-php artisan database:get-fresh-stocks {page} {token} - получить свежие данные о складах по последней новой дате
+php artisan database:get-fresh-entities {income} {page} {token} - получить свежие данные о доходах по последней новой дате
+php artisan database:get-fresh-entities {order} {page} {token} - получить свежие данные о заказах по последней новой дате
+php artisan database:get-fresh-entities {sale} {page} {token} - получить свежие данные о продажах по последней новой дате
+php artisan database:get-fresh-entities {stock} {page} {token} - получить свежие данные о складах по последней новой дате
 
 php artisan store:company {--name=} - создать информацию о компании
 php artisan store:api-service {--name=} - создать информацию об апи сервисе
@@ -64,8 +54,8 @@ php artisan store:token-type {--name=} {--api_service_id=} - создать ин
 php artisan store:api-token {--token=} {--token_type_id=} - создать информацию о токене
 php artisan store:account {--name=} {--api_token_id=} {--company_id=} - создать информацию об аккаунте
 
-php artisan destroy:destroy-income {id} {token} - удлить информацию о доходе
-php artisan destroy:destroy-order {id} {token} - удлить информацию о заказе
-php artisan destroy:destroy-sale {id} {token} - удлить информацию о продаже
-php artisan destroy:destroy-stock {id} {token} - удлить информацию о складе
+php artisan database:destroy-entity {income} {id} {token} - удлить информацию о доходе
+php artisan database:destroy-entity {order} {id} {token} - удлить информацию о заказе
+php artisan database:destroy-entity {sale} {id} {token} - удлить информацию о продаже
+php artisan database:destroy-entity {stock} {id} {token} - удлить информацию о складе
 ````

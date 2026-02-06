@@ -12,6 +12,6 @@ trait Sortable
 {
     public function scopeLatestDate(Builder $builder)
     {
-        $builder->orderBy('date', 'desc');
+        $builder->latest('date');
     }
 }

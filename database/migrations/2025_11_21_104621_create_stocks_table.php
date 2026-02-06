@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Stock;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +34,8 @@ return new class extends Migration
             $table->string('discount')->nullable();
             $table->integer('nm_id')->nullable();
             $table->timestamps();
+
+            $table->unique(Stock::UNIQUE_ATTRIBUTES);
         });
     }
 
